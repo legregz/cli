@@ -1,3 +1,9 @@
+# Assets
+assets/*
+
+# Tests
+src/test.*
+
 # Prerequisites
 *.d
 

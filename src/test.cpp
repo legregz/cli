@@ -7,7 +7,7 @@
 using namespace std;
 
 int main() {
-	// Window window;
+	Window window;
 	// window.init();
 	// window.set_color(back_white);
 	// window.set_direction(DIRECTION_V);
@@ -45,11 +45,9 @@ int main() {
 	// container_Div.set_direction(DIRECTION_H);
 	// container_Div.set_expandable(NOT_EXPANDABLE);
 
-	Window window;
 	Image image;
-	image.set_path("./assets/images/folder-developpement.png");
-	image.set_dimensions({64, 64});
-	window.add(image);
+	image.set_path("./assets/images/linux-pissing-on-windows.png");
+	image.set_dimensions({16, 16});
 
 	// header_Div.add(add_button);
 	// header_Div.add(title);
@@ -60,6 +58,8 @@ int main() {
 	// content_Div.add(content);
 	// container_Div.add(content_Div);
 	// container_Div.add(content_Div);
+
+	window.add(image);
 
 	// map<string, shared_ptr<Element>> elements = open_elts_file("test");
 	// content_Div.add(elements["error"]);
