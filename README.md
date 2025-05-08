@@ -1,2 +1,2 @@
 # cli
-Simple way to design interface in termninal with components
+Our Goal : Make the simplest way to design interfaces in termninal with components
