@@ -2,7 +2,8 @@
 assets/*
 
 # Tests
-src/test.*
+test.*
+test
 
 # Prerequisites
 *.d
