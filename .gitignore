@@ -5,6 +5,10 @@ assets/*
 test.*
 test
 
+# Todos
+todo.*
+todo
+
 # Prerequisites
 *.d
 

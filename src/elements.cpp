@@ -9,10 +9,14 @@
 #include "../inc/functions.h"
 #include "../inc/style.h"
 
-Element::Element() : color((char*)normal), size{0, 1}, position{1, 1}, expandable(EXPANDABLE) {}
+Element::Element() : color(white), background_color(black), size{0, 1}, position{1, 1}, expandable(EXPANDABLE) {}
 
-const char* Element::get_color() const {
+COLOR Element::get_color() const {
 	return color;
+}
+
+COLOR Element::get_background_color() const {
+	return background_color;
 }
 
 bool Element::get_expandable() const {
@@ -27,8 +31,12 @@ const array<int, 2>& Element::get_position() const {
 	return position;
 }
 
-void Element::set_color(const char* color) {
+void Element::set_color(COLOR color) {
 	this->color = color;
+}
+
+void Element::set_background_color(COLOR color) {
+	this->background_color = color;
 }
 
 void Element::set_expandable(bool expandable) {
@@ -55,7 +63,7 @@ Frame::Frame() : direction(DIRECTION_H) {Element::set_size({0, 0});}
 Frame::Frame(const Frame& other) {
 	expandable = other.expandable;
 	direction = other.direction;
-	set_size(other.get_size());
+	Element::set_size(other.get_size());
 	color = other.color;
 
 	for (const auto& elt : other.elements) {
@@ -70,9 +78,9 @@ bool Frame::get_direction() const {
 void Frame::add(Element& elt) {
 	elements.push_back(elt.clone());
 	if (!direction) {
-		Element::set_size({size[0] += elt.get_size()[0], size[1] < elt.get_size()[1] ? elt.get_size()[1] : size[1]});
+		Element::set_size({size[0] + elt.get_size()[0], size[1] < elt.get_size()[1] ? elt.get_size()[1] : size[1]});
 	} else {
-		Element::set_size({size[0] < elt.get_size()[0] ? elt.get_size()[0] : size[0], size[1] += elt.get_size()[1]});
+		Element::set_size({size[0] < elt.get_size()[0] ? elt.get_size()[0] : size[0], size[1] + elt.get_size()[1]});
 	}
 }
 
@@ -81,30 +89,28 @@ void Frame::set_size(const array<int, 2>& size) {
 
 	if (expandable) {
 		Element::set_size(size);
-	} else {
-		int width = 0, elt_width;
-		if (!direction) {
-			for (auto& elt : elements) {
-				width += elt->get_size()[0];
-			}
-		} else {
-			for (auto& elt : elements) {
-				elt_width = elt->get_size()[0];
-				if (width < elt_width) {
-					width = elt_width;
-				}
-			}
-		}
+	}// else {
+	// 	int width = 0, elt_width;
+	// 	if (!direction) {
+	// 		for (auto& elt : elements) {
+	// 			width += elt->get_size()[0];
+	// 		}
+	// 	} else {
+	// 		for (auto& elt : elements) {
+	// 			elt_width = elt->get_size()[0];
+	// 			if (width < elt_width) {
+	// 				width = elt_width;
+	// 			}
+	// 		}
+	// 	}
 
-		// cout << "frame width" << width << endl;
-
-		Element::set_size({width, size[1]});
-	}
+	// 	Element::set_size({width, size[1]});
+	// }
 
 	int added_sizes = 0;
 
 	if (!direction) { // DIRECTION_H
-		int available_width = this->size[0], expandable_elts = elements.size(), index = 0;
+		int available_width = this->size[0], expandable_elts = elements.size(), pad;
 
 		for (auto& elt : elements) {
 			if (!elt->get_expandable()) {
@@ -114,24 +120,28 @@ void Frame::set_size(const array<int, 2>& size) {
 		}
 
 		if (expandable_elts != 0) {
+			pad = available_width % expandable_elts;
 			available_width /= expandable_elts;
 		}
 
-		// cout << available_width << endl;s
-
 		for (auto& elt : elements) {
 			elt->set_position({position[0] + added_sizes, position[1]});
-			if (elt->get_expandable()) {
+			if (elt->get_expandable() && expandable) {
+				if (expandable_elts == 1) {
+					available_width += pad;
+				}
 				elt->set_size({available_width, size[1]});
-				index++;
+				expandable_elts--;
+			} else {
+				elt->set_size(elt->get_size());
 			}
 			added_sizes += elt->get_size()[0];
 		}
+
 	} else { // DIRECTION_V
 		for (auto& elt : elements) {
 			elt->set_position({position[0], position[1] + added_sizes});
 			elt->set_size({size[0], elt->get_size()[1]});
-			// cout << position[1] + added_sizes << endl;
 			added_sizes += elt->get_size()[1];
 		}
 	}
@@ -142,6 +152,13 @@ void Frame::set_direction(bool direction) {
 }
 
 void Frame::show() {
+	cout << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm'<< "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
+
+	for (int y = 0; y < size[1]; y++) {
+		cout << "\e[" << position[1] + y << ";" << position[0] << 'f';
+		spaces(size[0]);
+	}
+
 	for (auto& elt : elements) {
 		elt->show();
 	}
@@ -164,12 +181,14 @@ Element& Frame::get_elt(int index) const {
 
 Window::Window() {}
 
-void Window::show() {
+void Window::set_size() {
 	struct winsize ws;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
-	set_size({ws.ws_col, ws.ws_row});
-	// system("clear");
+	Frame::set_size({ws.ws_col, ws.ws_row});
+}
 
+void Window::show() {
+	system("clear");
 	Frame::show();
 }
 
@@ -194,7 +213,7 @@ void Text::set_text(const string& text) {
 
 void Text::show() {
 	double nb_spaces;
-	cout << "\e[" << position[1] << ";" << position[0] << 'f' << color;
+	cout << "\e[" << position[1] << ";" << position[0] << 'f' << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm' << "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
 	switch (alignment) {
 		case 'l':
 			printl(text, size[0]);
@@ -225,7 +244,7 @@ void Image::set_path(const string& path) {
 }
 
 void Image::set_dimensions(const array<int, 2>& dimensions) {
-	Element::set_size(dimensions);
+	Element::set_size({dimensions[0], dimensions[1] / 2});
 
 	cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
 	cv::Vec3b f_pixel, b_pixel;
@@ -266,8 +285,8 @@ void Image::set_dimensions(const array<int, 2>& dimensions) {
 }
 
 void Image::show() {
-	F_COLOR f_color;
-	B_COLOR b_color;
+	COLOR f_color;
+	COLOR b_color;
 
 	for (int y = 0; y < image.size(); y++) {
 		cout << "\e[" << position[1] + y << ";" << position[0] << 'f';

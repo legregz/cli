@@ -8,19 +8,22 @@ using namespace std;
 
 class Element {
 protected:
-	const char* color;
+	COLOR color;
+	COLOR background_color;
 	bool expandable;
 	array<int, 2> size;
 	array<int, 2> position;
 public:
 	Element();
 
-	virtual const char* get_color() const;
+	virtual COLOR get_color() const;
+	virtual COLOR get_background_color() const;
 	virtual bool get_expandable() const;
 	virtual const array<int, 2>& get_size() const;
 	virtual const array<int, 2>& get_position() const;
 
-	virtual void set_color(const char* color);
+	virtual void set_color(COLOR color);
+	virtual void set_background_color(COLOR background_color);
 	virtual void set_expandable(bool expandable);
 	virtual void set_size(const array<int, 2>& size);
 	virtual void set_position(const array<int, 2>& size);
@@ -61,6 +64,7 @@ public:
 	Window();
 
 	// void init();
+	void set_size();
 	void show();
 };
 
