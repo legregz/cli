@@ -9,7 +9,7 @@
 #include "../inc/functions.h"
 #include "../inc/style.h"
 
-Element::Element() : color(white), background_color(black), size{0, 1}, position{1, 1}, expandable(EXPANDABLE) {}
+Element::Element() : color(white), background_color(black), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0} {}
 
 COLOR Element::get_color() const {
 	return color;
@@ -31,6 +31,10 @@ const array<int, 2>& Element::get_position() const {
 	return position;
 }
 
+const array<bool, 4>& Element::get_border() const {
+	return border;
+}
+
 void Element::set_color(COLOR color) {
 	this->color = color;
 }
@@ -44,18 +48,60 @@ void Element::set_expandable(bool expandable) {
 }
 
 void Element::set_size(const array<int, 2>& size) {
-	this->size[0] = size[0];
-	this->size[1] = size[1];
+	this->size = size;
 }
 
 void Element::set_position(const array<int, 2>& position) {
-	this->position[0] = position[0];
-	this->position[1] = position[1];
+	this->position = position;
+}
+
+void Element::set_border(const array<bool, 4>& border) {
+	size[0] += border[0] - this->border[0] + border[2] - this->border[2];
+	size[1] += border[1] - this->border[1] + border[3] - this->border[3];
+
+	this->border = border;
 }
 
 template <typename Derived>
 unique_ptr<Element> ClonableElement<Derived>::clone() const {
 	return make_unique<Derived>(static_cast<const Derived&>(*this));
+}
+
+void Element::show() const {
+	if (border[0]) {
+		if (border[1]) {
+			cout << "\e[" << position[1] << ";" << position[0] << "f┌";
+		}
+		for (int y = 0; y < size[1] - border[1] - border[3]; y++) {
+			cout << "\e[" << position[1] + border[1] + y << ";" << position[0] << "f│";
+		}
+		if (border[3]) {
+			cout << "\e[" << position[1] + size[1] - 1 << ";" << position[0] << "f└";
+		}
+	}
+	if (border[2]) {
+		if (border[1]) {
+			cout << "\e[" << position[1] << ";" << position[0] + size[0] - 1 << "f┐";
+		}
+		for (int y = 0; y < size[1] - border[1] - border[3]; y++) {
+			cout << "\e[" << position[1] + border[1] + y << ";" << position[0] + size[0] - 1 << "f│";
+		}
+		if (border[3]) {
+			cout << "\e[" << position[1] + size[1] - 1 << ";" << position[0] + size[0] - 1 << "f┘";
+		}
+	}
+	if (border[1]) {
+		for (int x = 0; x < size[0] - border[0] - border[2]; x++) {
+			cout << "\e[" << position[1] << ";" << position[0] + border[0] + x << "f─";
+		}
+	}
+	if (border[3]) {
+		for (int x = 0; x < size[0] - border[0] - border[2]; x++) {
+			cout << "\e[" << position[1] + size[1] - 1 << ";" << position[0] + border[0] + x << "f─";
+		}
+	}
+
+	// cout << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm'<< "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
 }
 
 Frame::Frame() : direction(DIRECTION_H) {Element::set_size({0, 0});}
@@ -89,7 +135,9 @@ void Frame::set_size(const array<int, 2>& size) {
 
 	if (expandable) {
 		Element::set_size(size);
-	}// else {
+	} // else if (size[0] < this->size[0]) {
+	// 	Element::set_size({size[0], this->size[1]});
+	// }
 	// 	int width = 0, elt_width;
 	// 	if (!direction) {
 	// 		for (auto& elt : elements) {
@@ -151,13 +199,13 @@ void Frame::set_direction(bool direction) {
 	this->direction = direction;
 }
 
-void Frame::show() {
-	cout << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm'<< "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
+void Frame::show() const {
+	// for (int y = 0; y < size[1]; y++) {
+	// 	cout << "\e[" << position[1] + y << ";" << position[0] << 'f';
+	// 	spaces(size[0]);
+	// }
 
-	for (int y = 0; y < size[1]; y++) {
-		cout << "\e[" << position[1] + y << ";" << position[0] << 'f';
-		spaces(size[0]);
-	}
+	Element::show();
 
 	for (auto& elt : elements) {
 		elt->show();
@@ -211,9 +259,11 @@ void Text::set_text(const string& text) {
 	size[0] = text.size();
 }
 
-void Text::show() {
+void Text::show() const {
+	Element::show();
+	cout << "\e[" << position[1] << ";" << position[0] << 'f';
+
 	double nb_spaces;
-	cout << "\e[" << position[1] << ";" << position[0] << 'f' << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm' << "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
 	switch (alignment) {
 		case 'l':
 			printl(text, size[0]);
@@ -248,7 +298,7 @@ void Image::set_dimensions(const array<int, 2>& dimensions) {
 
 	cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
 	cv::Vec3b f_pixel, b_pixel;
-	array<uint16_t, 3> avg_f_pixel, avg_b_pixel;
+	array<int, 3> avg_f_pixel, avg_b_pixel;
 	int y_factor = img.rows / dimensions[1], x_factor = img.cols / dimensions[0], pixel_group_size = x_factor * y_factor;
 
 	// if (img.empty()) {
@@ -284,7 +334,7 @@ void Image::set_dimensions(const array<int, 2>& dimensions) {
 	}
 }
 
-void Image::show() {
+void Image::show() const {
 	COLOR f_color;
 	COLOR b_color;
 
@@ -297,4 +347,12 @@ void Image::show() {
 		}
 	}
 	cout << normal;
+}
+
+Button::Button() : Frame() {}
+
+Button::Button(const Button& other) : Frame(other) {}
+
+void Button::show() const {
+	Frame::show();
 }

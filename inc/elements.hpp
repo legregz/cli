@@ -1,5 +1,6 @@
 #include "style.h"
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -13,6 +14,7 @@ protected:
 	bool expandable;
 	array<int, 2> size;
 	array<int, 2> position;
+	array<bool, 4> border;
 public:
 	Element();
 
@@ -21,16 +23,18 @@ public:
 	virtual bool get_expandable() const;
 	virtual const array<int, 2>& get_size() const;
 	virtual const array<int, 2>& get_position() const;
+	virtual const array<bool, 4>& get_border() const;
 
 	virtual void set_color(COLOR color);
 	virtual void set_background_color(COLOR background_color);
 	virtual void set_expandable(bool expandable);
 	virtual void set_size(const array<int, 2>& size);
 	virtual void set_position(const array<int, 2>& size);
+	virtual void set_border(const array<bool, 4>& border);
 
 	virtual unique_ptr<Element> clone() const = 0;
 
-	virtual void show() = 0;
+	virtual void show() const = 0;
 
 	virtual ~Element() = default;
 };
@@ -56,7 +60,7 @@ public:
 	void set_size(const array<int, 2>& size) override;
 
 	void add(Element& elt);
-	void show() override;
+	void show() const override;
 };
 
 class Window : public Frame {
@@ -81,7 +85,7 @@ public:
 	void set_alignment(char alignment);
 	void set_text(const string& text);
 
-	void show() override;
+	void show() const override;
 };
 
 class Image : public ClonableElement<Image> {
@@ -97,5 +101,14 @@ public:
 	void set_path(const string& path);
 	void set_dimensions(const array<int, 2>& dimensions);
 
-	void show() override;
+	void show() const override;
+};
+
+class Button : Frame {
+public:
+	Button();
+
+	Button(const Button& other);
+
+	void show() const override;
 };
