@@ -26,24 +26,17 @@ void Text::set_text(const string& text) {
 
 void Text::show() const {
 	Element::show();
-	cout << "\e[" << position.y + size.h / 2 << ";" << position.x << 'f';
-
-	double nb_spaces;
+	int posx = 0;
 	switch (alignment) {
-		case 'l':
-			printl(text, size.w);
-			spaces(size.w - text.size());
-			break;
 		case 'c':
-			nb_spaces = (size.w - text.size()) / 2.0;
-			spaces(nb_spaces + (nb_spaces - (int)nb_spaces > 0 ? 1 : 0));
-			printl(text, size.w);
-			spaces(nb_spaces);
+			posx = size.w / 2 - text.size() / 2;
 			break;
 		case 'r':
-			spaces(size.w - text.size());
-			printl(text, size.w);
+			posx = size.w - text.size();
 			break;
 	}
+
+	cout << "\e[" << position.y + size.h / 2 << ";" << position.x + (posx >= 0 ? posx : 0) << 'f';
+	printl(text, size.w);
 	cout << normal;
 }

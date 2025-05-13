@@ -1,4 +1,5 @@
 #include "../inc/element.hpp"
+#include "../inc/functions.h"
 #include <iostream>
 
 Element::Element() : color(white), background_color(black), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0} {}
@@ -73,6 +74,7 @@ void Element::set_border(const BORDER& border) {
 }
 
 void Element::show() const {
+	cout << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm'<< "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
 	POSITION pos = get_position(); // with border
 
 	if (border.l) {
@@ -108,5 +110,8 @@ void Element::show() const {
 		}
 	}
 
-	// cout << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm'<< "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
+	for (int y = 0; y < size.h; y++) {
+		cout << "\e[" << position.y + y << ";" << position.x << 'f';
+		prints(size.w);
+	}
 }

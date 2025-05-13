@@ -41,9 +41,9 @@ const COLOR black {0, 0, 0};
 const COLOR red {255, 0, 0};
 const COLOR green {0, 255, 0};
 const COLOR blue {0, 0, 255};
-const COLOR yellow {0, 255, 255};
+const COLOR yellow {255, 255, 0};
 const COLOR violet {255, 0, 255};
-const COLOR cyan {255, 255, 0};
+const COLOR cyan {0, 255, 255};
 const COLOR white {255, 255, 255};
 
 const bool NOT_EXPANDABLE = false;

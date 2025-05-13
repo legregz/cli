@@ -102,11 +102,6 @@ void Frame::set_direction(bool direction) {
 }
 
 void Frame::show() const {
-	// for (int y = 0; y < size.h; y++) {
-	// 	cout << "\e[" << position.y + y << ";" << position.x << 'f';
-	// 	spaces(size.w);
-	// }
-
 	Element::show();
 
 	for (auto& elt : elements) {

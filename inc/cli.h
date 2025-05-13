@@ -1,5 +1,10 @@
 #pragma once
 
+#include "style.h"
+#include "window.hpp"
+#include "text.hpp"
+#include "image.hpp"
+
 // #include <map>
 // #include <string>
 // #include <memory>
