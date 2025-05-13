@@ -23,15 +23,23 @@ bool Element::get_expandable() const {
 	return expandable;
 }
 
-const array<int, 2>& Element::get_size() const {
-	return size;
+SIZE Element::get_size() const {
+	return {size.w + border.l + border.r, size.h + border.t + border.b};
 }
 
-const array<int, 2>& Element::get_position() const {
-	return position;
+int Element::get_width() const {
+	return size.w + border.l + border.r;
 }
 
-const array<bool, 4>& Element::get_border() const {
+int Element::get_height() const {
+	return size.h + border.t + border.b;
+}
+
+POSITION Element::get_position() const {
+	return {position.x - border.l, position.y - border.t};
+}
+
+BORDER Element::get_border() const {
 	return border;
 }
 
@@ -47,18 +55,28 @@ void Element::set_expandable(bool expandable) {
 	this->expandable = expandable;
 }
 
-void Element::set_size(const array<int, 2>& size) {
-	this->size = size;
+void Element::set_size(const SIZE& size) {
+	this->size = {size.w - border.l - border.r, size.h - border.t - border.b};
+	update_size();
 }
 
-void Element::set_position(const array<int, 2>& position) {
-	this->position = position;
+void Element::update_size() {}
+
+void Element::set_width(int width) {
+	size.w = width - border.l - border.r;
+	update_size();
 }
 
-void Element::set_border(const array<bool, 4>& border) {
-	size[0] += border[0] - this->border[0] + border[2] - this->border[2];
-	size[1] += border[1] - this->border[1] + border[3] - this->border[3];
+void Element::set_height(int height) {
+	size.h = height - border.t - border.b;
+	update_size();
+}
 
+void Element::set_position(const POSITION& position) {
+	this->position = {position.x + border.l, position.y + border.t};
+}
+
+void Element::set_border(const BORDER& border) {
 	this->border = border;
 }
 
@@ -68,36 +86,38 @@ unique_ptr<Element> ClonableElement<Derived>::clone() const {
 }
 
 void Element::show() const {
-	if (border[0]) {
-		if (border[1]) {
-			cout << "\e[" << position[1] << ";" << position[0] << "f┌";
+	POSITION pos = get_position(); // with border
+
+	if (border.l) {
+		if (border.t) {
+			cout << "\e[" << pos.y << ";" << pos.x << "f┌";
 		}
-		for (int y = 0; y < size[1] - border[1] - border[3]; y++) {
-			cout << "\e[" << position[1] + border[1] + y << ";" << position[0] << "f│";
+		for (int y = 0; y < size.h; y++) {
+			cout << "\e[" << position.y + y << ";" << pos.x << "f│";
 		}
-		if (border[3]) {
-			cout << "\e[" << position[1] + size[1] - 1 << ";" << position[0] << "f└";
-		}
-	}
-	if (border[2]) {
-		if (border[1]) {
-			cout << "\e[" << position[1] << ";" << position[0] + size[0] - 1 << "f┐";
-		}
-		for (int y = 0; y < size[1] - border[1] - border[3]; y++) {
-			cout << "\e[" << position[1] + border[1] + y << ";" << position[0] + size[0] - 1 << "f│";
-		}
-		if (border[3]) {
-			cout << "\e[" << position[1] + size[1] - 1 << ";" << position[0] + size[0] - 1 << "f┘";
+		if (border.b) {
+			cout << "\e[" << position.y + size.h << ";" << pos.x << "f└";
 		}
 	}
-	if (border[1]) {
-		for (int x = 0; x < size[0] - border[0] - border[2]; x++) {
-			cout << "\e[" << position[1] << ";" << position[0] + border[0] + x << "f─";
+	if (border.r) {
+		if (border.t) {
+			cout << "\e[" << pos.y << ";" << position.x + size.w << "f┐";
+		}
+		for (int y = 0; y < size.h; y++) {
+			cout << "\e[" << position.y + y << ";" << position.x + size.w << "f│";
+		}
+		if (border.b) {
+			cout << "\e[" << position.y + size.h << ";" << position.x + size.w << "f┘";
 		}
 	}
-	if (border[3]) {
-		for (int x = 0; x < size[0] - border[0] - border[2]; x++) {
-			cout << "\e[" << position[1] + size[1] - 1 << ";" << position[0] + border[0] + x << "f─";
+	if (border.t) {
+		for (int x = 0; x < size.w; x++) {
+			cout << "\e[" << pos.y << ";" << position.x + x << "f─";
+		}
+	}
+	if (border.b) {
+		for (int x = 0; x < size.w; x++) {
+			cout << "\e[" << position.y + size.h << ";" << position.x + x << "f─";
 		}
 	}
 
@@ -107,10 +127,12 @@ void Element::show() const {
 Frame::Frame() : direction(DIRECTION_H) {Element::set_size({0, 0});}
 
 Frame::Frame(const Frame& other) {
-	expandable = other.expandable;
-	direction = other.direction;
-	Element::set_size(other.get_size());
 	color = other.color;
+	background_color = other.background_color;
+	expandable = other.expandable;
+	size = other.size;
+	border = other.border;
+	direction = other.direction;
 
 	for (const auto& elt : other.elements) {
 		elements.push_back(elt->clone());
@@ -124,19 +146,19 @@ bool Frame::get_direction() const {
 void Frame::add(Element& elt) {
 	elements.push_back(elt.clone());
 	if (!direction) {
-		Element::set_size({size[0] + elt.get_size()[0], size[1] < elt.get_size()[1] ? elt.get_size()[1] : size[1]});
+		Element::set_size({size.w + elt.get_width(), size.h < elt.get_height() ? elt.get_height() : size.h});
 	} else {
-		Element::set_size({size[0] < elt.get_size()[0] ? elt.get_size()[0] : size[0], size[1] + elt.get_size()[1]});
+		Element::set_size({size.w < elt.get_width() ? elt.get_width() : size.w, size.h + elt.get_height()});
 	}
 }
 
-void Frame::set_size(const array<int, 2>& size) {
+void Frame::update_size() {
 	// cout << "exp" << expandable << endl;
 
-	if (expandable) {
-		Element::set_size(size);
-	} // else if (size[0] < this->size[0]) {
-	// 	Element::set_size({size[0], this->size[1]});
+	// if (expandable) {
+	// 	Element::set_size(size);
+	// } // else if (size.w < this->size.w) {
+	// 	Element::set_size({size.w, this->size.h});
 	// }
 	// 	int width = 0, elt_width;
 	// 	if (!direction) {
@@ -152,17 +174,17 @@ void Frame::set_size(const array<int, 2>& size) {
 	// 		}
 	// 	}
 
-	// 	Element::set_size({width, size[1]});
+	// 	Element::set_size({width, size.h});
 	// }
 
 	int added_sizes = 0;
 
 	if (!direction) { // DIRECTION_H
-		int available_width = this->size[0], expandable_elts = elements.size(), pad;
+		int available_width = this->size.w, expandable_elts = elements.size(), pad;
 
 		for (auto& elt : elements) {
 			if (!elt->get_expandable()) {
-				available_width -= elt->get_size()[0];
+				available_width -= elt->get_width();
 				expandable_elts--;
 			}
 		}
@@ -173,24 +195,24 @@ void Frame::set_size(const array<int, 2>& size) {
 		}
 
 		for (auto& elt : elements) {
-			elt->set_position({position[0] + added_sizes, position[1]});
+			elt->set_position({position.x + added_sizes, position.y});
 			if (elt->get_expandable() && expandable) {
 				if (expandable_elts == 1) {
 					available_width += pad;
 				}
-				elt->set_size({available_width, size[1]});
+				elt->set_size({available_width, size.h});
 				expandable_elts--;
 			} else {
-				elt->set_size(elt->get_size());
+				elt->set_height(size.h);
 			}
-			added_sizes += elt->get_size()[0];
+			added_sizes += elt->get_width();
 		}
 
 	} else { // DIRECTION_V
 		for (auto& elt : elements) {
-			elt->set_position({position[0], position[1] + added_sizes});
-			elt->set_size({size[0], elt->get_size()[1]});
-			added_sizes += elt->get_size()[1];
+			elt->set_position({position.x, position.y + added_sizes});
+			elt->set_width(this->size.w);
+			added_sizes += elt->get_height();
 		}
 	}
 }
@@ -200,9 +222,9 @@ void Frame::set_direction(bool direction) {
 }
 
 void Frame::show() const {
-	// for (int y = 0; y < size[1]; y++) {
-	// 	cout << "\e[" << position[1] + y << ";" << position[0] << 'f';
-	// 	spaces(size[0]);
+	// for (int y = 0; y < size.h; y++) {
+	// 	cout << "\e[" << position.y + y << ";" << position.x << 'f';
+	// 	spaces(size.w);
 	// }
 
 	Element::show();
@@ -232,6 +254,7 @@ Window::Window() {}
 void Window::set_size() {
 	struct winsize ws;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
+	Element::set_position(position);
 	Frame::set_size({ws.ws_col, ws.ws_row});
 }
 
@@ -256,28 +279,28 @@ void Text::set_alignment(char alignment) {
 
 void Text::set_text(const string& text) {
 	this->text = text;
-	size[0] = text.size();
+	size.w = text.size();
 }
 
 void Text::show() const {
 	Element::show();
-	cout << "\e[" << position[1] << ";" << position[0] << 'f';
+	cout << "\e[" << position.y + size.h / 2 << ";" << position.x << 'f';
 
 	double nb_spaces;
 	switch (alignment) {
 		case 'l':
-			printl(text, size[0]);
-			spaces(size[0] - text.size());
+			printl(text, size.w);
+			spaces(size.w - text.size());
 			break;
 		case 'c':
-			nb_spaces = (size[0] - text.size()) / 2.0;
+			nb_spaces = (size.w - text.size()) / 2.0;
 			spaces(nb_spaces + (nb_spaces - (int)nb_spaces > 0 ? 1 : 0));
-			printl(text, size[0]);
+			printl(text, size.w);
 			spaces(nb_spaces);
 			break;
 		case 'r':
-			spaces(size[0] - text.size());
-			printl(text, size[0]);
+			spaces(size.w - text.size());
+			printl(text, size.w);
 			break;
 	}
 	cout << normal;
@@ -339,7 +362,7 @@ void Image::show() const {
 	COLOR b_color;
 
 	for (int y = 0; y < image.size(); y++) {
-		cout << "\e[" << position[1] + y << ";" << position[0] << 'f';
+		cout << "\e[" << position.y + y << ";" << position.x << 'f';
 		for (int x = 0; x < image[y].size(); x++) {
 			f_color = image[y][x].f_color;
 			b_color = image[y][x].b_color;

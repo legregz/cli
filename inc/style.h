@@ -5,6 +5,18 @@
 
 using namespace std;
 
+typedef struct POSITION {
+	int x, y;
+} POSITION;
+
+typedef struct SIZE {
+	int w, h;
+} SIZE;
+
+typedef struct BORDER {
+	bool l, t, r, b;
+} BORDER;
+
 typedef struct COLOR {
 	uint8_t r;
 	uint8_t g;

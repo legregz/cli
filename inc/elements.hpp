@@ -1,6 +1,5 @@
 #include "style.h"
 #include <array>
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -12,25 +11,30 @@ protected:
 	COLOR color;
 	COLOR background_color;
 	bool expandable;
-	array<int, 2> size;
-	array<int, 2> position;
-	array<bool, 4> border;
+	SIZE size;
+	POSITION position;
+	BORDER border;
 public:
 	Element();
 
 	virtual COLOR get_color() const;
 	virtual COLOR get_background_color() const;
 	virtual bool get_expandable() const;
-	virtual const array<int, 2>& get_size() const;
-	virtual const array<int, 2>& get_position() const;
-	virtual const array<bool, 4>& get_border() const;
+	virtual SIZE get_size() const;
+	virtual int get_width() const;
+	virtual int get_height() const;
+	virtual POSITION get_position() const;
+	virtual BORDER get_border() const;
 
 	virtual void set_color(COLOR color);
 	virtual void set_background_color(COLOR background_color);
 	virtual void set_expandable(bool expandable);
-	virtual void set_size(const array<int, 2>& size);
-	virtual void set_position(const array<int, 2>& size);
-	virtual void set_border(const array<bool, 4>& border);
+	virtual void set_size(const SIZE& size);
+	virtual void update_size();
+	virtual void set_width(int width);
+	virtual void set_height(int height);
+	virtual void set_position(const POSITION& size);
+	virtual void set_border(const BORDER& border);
 
 	virtual unique_ptr<Element> clone() const = 0;
 
@@ -57,7 +61,7 @@ public:
 	Element& get_elt(int index) const;
 
 	void set_direction(bool direction);
-	void set_size(const array<int, 2>& size) override;
+	void update_size() override;
 
 	void add(Element& elt);
 	void show() const override;
