@@ -28,14 +28,14 @@ typedef struct CHAR {
 	COLOR b_color;
 } CHAR;
 
-#define normal "\e[0m"
-#define bold "\e[1m"
-#define dim "\e[2m"
-#define italic "\e[3m"
-#define underline "\e[4m"
-#define blink "\e[5m"
-#define reverse "\e[7m"
-#define invisible "\e[8m"
+const string normal = "\e[0m";
+const string bold = "\e[1m";
+const string dim = "\e[2m";
+const string italic = "\e[3m";
+const string underline = "\e[4m";
+const string blink = "\e[5m";
+const string reverse = "\e[7m";
+const string invisible = "\e[8m";
 
 const COLOR black {0, 0, 0};
 const COLOR red {255, 0, 0};
