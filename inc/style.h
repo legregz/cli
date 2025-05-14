@@ -5,51 +5,63 @@
 
 using namespace std;
 
-typedef struct F_COLOR {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} F_COLOR;
+typedef struct POSITION {
+	int x, y;
+} POSITION;
 
-typedef struct B_COLOR {
+typedef struct SIZE {
+	int w, h;
+} SIZE;
+
+typedef struct BORDER {
+	bool l, t, r, b;
+} BORDER;
+
+typedef struct PADDING {
+	int l, t, r, b;
+} PADDING;
+
+typedef struct ALIGNMENT {
+	char w, h;
+} ALIGNMENT;
+
+typedef struct COLOR {
 	uint8_t r;
 	uint8_t g;
 	uint8_t b;
-} B_COLOR;
+} COLOR;
 
 typedef struct CHAR {
-	F_COLOR f_color;
-	B_COLOR b_color;
+	COLOR f_color;
+	COLOR b_color;
 } CHAR;
 
-#define normal "\e[0m"
-#define bold "\e[1m"
-#define dim "\e[2m"
-#define italic "\e[3m"
-#define underline "\e[4m"
-#define blink "\e[5m"
-#define reverse "\e[7m"
-#define invisible "\e[8m"
+const string normal = "\e[0m";
+const string bold = "\e[1m";
+const string dim = "\e[2m";
+const string italic = "\e[3m";
+const string underline = "\e[4m";
+const string blink = "\e[5m";
+const string reverse = "\e[7m";
+const string invisible = "\e[8m";
 
-#define back_black "\e[40m"
-#define back_red "\e[41m"
-#define back_green "\e[42m"
-#define back_yellow "\e[43m"
-#define back_blue "\e[44m"
-#define back_violet "\e[45m"
-#define back_cyan "\e[46m"
-#define back_white "\e[47m"
-
-#define black "\e[90m"
-#define red "\e[91m"
-#define green "\e[92m"
-#define yellow "\e[93m"
-#define blue "\e[94m"
-#define violet "\e[95m"
-#define cyan "\e[96m"
-#define white "\e[97m"
+const COLOR black {0, 0, 0};
+const COLOR red {255, 0, 0};
+const COLOR green {0, 255, 0};
+const COLOR blue {0, 0, 255};
+const COLOR yellow {255, 255, 0};
+const COLOR violet {255, 0, 255};
+const COLOR cyan {0, 255, 255};
+const COLOR white {255, 255, 255};
 
 const bool NOT_EXPANDABLE = false;
 const bool EXPANDABLE = true;
+
 const bool DIRECTION_H = 0;
 const bool DIRECTION_V = 1;
+
+const char LEFT = 'l';
+const char CENTER = 'c';
+const char RIGHT = 'r';
+const char TOP = 't';
+const char BOTTOM = 'b';

@@ -1,10 +1,13 @@
+#pragma once
+
+#include <cstdint>
 #include <string>
 
 using namespace std;
 
 void init();
 
-void spaces(int nb);
+void prints(int nb);
 
 void printl(string text, int size);
 

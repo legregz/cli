@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../inc/functions.h"
 
-void spaces(int nb)
+void prints(int nb)
 {
 	string text;
 	for (int i = 0; i < nb; i++)
