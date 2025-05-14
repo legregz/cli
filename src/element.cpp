@@ -2,7 +2,7 @@
 #include "../inc/functions.h"
 #include <iostream>
 
-Element::Element() : color(white), background_color(black), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0} {}
+Element::Element() : color(white), background_color(black), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0}, padding{0, 0, 0, 0} {}
 
 COLOR Element::get_color() const {
 	return color;
@@ -17,15 +17,18 @@ bool Element::get_expandable() const {
 }
 
 SIZE Element::get_size() const {
-	return {size.w + border.l + border.r, size.h + border.t + border.b};
+	return {get_width(), get_height()};
+	// return {size.w + border.l + border.r, size.h + border.t + border.b};
 }
 
 int Element::get_width() const {
-	return size.w + border.l + border.r;
+	return size.w + border.l + border.r + padding.l + padding.r;
+	// return size.w + border.l + border.r;
 }
 
 int Element::get_height() const {
-	return size.h + border.t + border.b;
+	return size.h + border.t + border.b + padding.t + padding.b;
+	// return size.h + border.t + border.b;
 }
 
 POSITION Element::get_position() const {
@@ -36,11 +39,15 @@ BORDER Element::get_border() const {
 	return border;
 }
 
-void Element::set_color(COLOR color) {
+PADDING Element::get_padding() const {
+	return padding;
+}
+
+void Element::set_color(const COLOR& color) {
 	this->color = color;
 }
 
-void Element::set_background_color(COLOR color) {
+void Element::set_background_color(const COLOR& color) {
 	this->background_color = color;
 }
 
@@ -49,28 +56,36 @@ void Element::set_expandable(bool expandable) {
 }
 
 void Element::set_size(const SIZE& size) {
-	this->size = {size.w - border.l - border.r, size.h - border.t - border.b};
+	// set_width(size.w);
+	// set_height(size.h);
+	this->size = {size.w - border.l - border.r - padding.l - padding.r, size.h - border.t - border.b - padding.t - padding.b};
 	update_size();
 }
 
 void Element::update_size() {}
 
 void Element::set_width(int width) {
-	size.w = width - border.l - border.r;
+	size.w = width - border.l - border.r - padding.l - padding.r;
+	// size.w = width - border.l - border.r;
 	update_size();
 }
 
 void Element::set_height(int height) {
-	size.h = height - border.t - border.b;
+	size.h = height - border.t - border.b - padding.t - padding.b;
+	// size.h = height - border.t - border.b;
 	update_size();
 }
 
 void Element::set_position(const POSITION& position) {
-	this->position = {position.x + border.l, position.y + border.t};
+	this->position = {position.x + border.l + padding.l, position.y + border.t + padding.t};
 }
 
 void Element::set_border(const BORDER& border) {
 	this->border = border;
+}
+
+void Element::set_padding(const PADDING& padding) {
+	this->padding = padding;
 }
 
 void Element::show() const {

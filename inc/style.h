@@ -17,6 +17,14 @@ typedef struct BORDER {
 	bool l, t, r, b;
 } BORDER;
 
+typedef struct PADDING {
+	int l, t, r, b;
+} PADDING;
+
+typedef struct ALIGNMENT {
+	char w, h;
+} ALIGNMENT;
+
 typedef struct COLOR {
 	uint8_t r;
 	uint8_t g;
@@ -48,5 +56,12 @@ const COLOR white {255, 255, 255};
 
 const bool NOT_EXPANDABLE = false;
 const bool EXPANDABLE = true;
+
 const bool DIRECTION_H = 0;
 const bool DIRECTION_V = 1;
+
+const char LEFT = 'l';
+const char CENTER = 'c';
+const char RIGHT = 'r';
+const char TOP = 't';
+const char BOTTOM = 'b';

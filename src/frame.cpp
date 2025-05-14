@@ -2,7 +2,7 @@
 // #include "../inc/clonableelement.hpp"
 #include <stdexcept>
 
-template class ClonableElement<Frame>;
+// template class ClonableElement<Frame>;
 
 Frame::Frame() : direction(DIRECTION_H) {Element::set_size({0, 0});}
 

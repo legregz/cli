@@ -1,6 +1,7 @@
 #pragma once
 
 #include "clonableelement.hpp"
+#include "element.hpp"
 #include <vector>
 
 class Image : public ClonableElement<Image> {

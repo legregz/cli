@@ -4,7 +4,7 @@
 
 using namespace cv;
 
-template class ClonableElement<Image>;
+// template class ClonableElement<Image>;
 
 Image::Image() {set_expandable(NOT_EXPANDABLE);}
 

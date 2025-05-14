@@ -11,6 +11,7 @@ protected:
 	SIZE size;
 	POSITION position;
 	BORDER border;
+	PADDING padding;
 public:
 	Element();
 
@@ -22,9 +23,10 @@ public:
 	virtual int get_height() const;
 	virtual POSITION get_position() const;
 	virtual BORDER get_border() const;
+	virtual PADDING get_padding() const;
 
-	virtual void set_color(COLOR color);
-	virtual void set_background_color(COLOR background_color);
+	virtual void set_color(const COLOR& color);
+	virtual void set_background_color(const COLOR& background_color);
 	virtual void set_expandable(bool expandable);
 	virtual void set_size(const SIZE& size);
 	virtual void update_size();
@@ -32,6 +34,7 @@ public:
 	virtual void set_height(int height);
 	virtual void set_position(const POSITION& size);
 	virtual void set_border(const BORDER& border);
+	virtual void set_padding(const PADDING& padding);
 
 	virtual unique_ptr<Element> clone() const = 0;
 
