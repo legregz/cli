@@ -8,5 +8,5 @@ public:
 
 	// void init();
 	void set_size();
-	void show();
+	void show() const override;
 };

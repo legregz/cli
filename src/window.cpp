@@ -11,7 +11,7 @@ void Window::set_size() {
 	Frame::set_size({ws.ws_col, ws.ws_row});
 }
 
-void Window::show() {
+void Window::show() const {
 	system("clear");
 	Frame::show();
 }
