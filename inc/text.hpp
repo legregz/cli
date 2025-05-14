@@ -1,7 +1,6 @@
 #pragma once
 
 #include "clonableelement.hpp"
-#include "element.hpp"
 #include "style.h"
 
 class Text : public ClonableElement<Text> {
