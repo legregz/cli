@@ -26,7 +26,9 @@ public:
 	virtual PADDING get_padding() const;
 
 	virtual void set_color(const COLOR& color);
+	virtual void set_color_r(const COLOR& color);
 	virtual void set_background_color(const COLOR& background_color);
+	virtual void set_background_color_r(const COLOR& background_color);
 	virtual void set_expandable(bool expandable);
 	virtual void set_size(const SIZE& size);
 	virtual void update_size();

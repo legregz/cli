@@ -1,10 +1,11 @@
 #include "../inc/frame.hpp"
 // #include "../inc/clonableelement.hpp"
+#include <memory>
 #include <stdexcept>
 
 // template class ClonableElement<Frame>;
 
-Frame::Frame() : direction(DIRECTION_H) {Element::set_size({0, 0});}
+Frame::Frame() : direction(DIRECTION_H), elements(vector<unique_ptr<Element>>()) {Element::set_size({0, 0});}
 
 Frame::Frame(const Frame& other) {
 	color = other.color;
@@ -13,6 +14,7 @@ Frame::Frame(const Frame& other) {
 	size = other.size;
 	border = other.border;
 	direction = other.direction;
+	padding = other.padding;
 
 	for (const auto& elt : other.elements) {
 		elements.push_back(elt->clone());
@@ -101,6 +103,21 @@ void Frame::set_direction(bool direction) {
 	this->direction = direction;
 }
 
+void Frame::set_color_r(const COLOR& color) {
+	set_color(color);
+	for (auto& elt : elements) {
+		// if ((elt) == (Frame))
+		elt->set_color_r(color);
+	}
+}
+
+void Frame::set_background_color_r(const COLOR& background_color) {
+	set_background_color(background_color);
+	for (auto& elt : elements) {
+		elt->set_background_color_r(background_color);
+	}
+}
+
 void Frame::show() const {
 	Element::show();
 
@@ -109,7 +126,7 @@ void Frame::show() const {
 	}
 }
 
-Element& Frame::get_elt(int index) const {
+const Element& Frame::get_elt(int index) const {
 	if (index < 0 || index >= elements.size()) {
 		throw out_of_range("Index out of range");
 	}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cfenv>
 #include <cstdint>
 #include <string>
 
@@ -36,23 +37,23 @@ typedef struct CHAR {
 	COLOR b_color;
 } CHAR;
 
-const string normal = "\e[0m";
-const string bold = "\e[1m";
-const string dim = "\e[2m";
-const string italic = "\e[3m";
-const string underline = "\e[4m";
-const string blink = "\e[5m";
-const string reverse = "\e[7m";
-const string invisible = "\e[8m";
+const string NORMAL = "\e[0m";
+const string BOLD = "\e[1m";
+const string DIM = "\e[2m";
+const string ITALIC = "\e[3m";
+const string UNDERLINE = "\e[4m";
+const string BLINK = "\e[5m";
+const string REVERSE = "\e[7m";
+const string INVISIBLE = "\e[8m";
 
-const COLOR black {0, 0, 0};
-const COLOR red {255, 0, 0};
-const COLOR green {0, 255, 0};
-const COLOR blue {0, 0, 255};
-const COLOR yellow {255, 255, 0};
-const COLOR violet {255, 0, 255};
-const COLOR cyan {0, 255, 255};
-const COLOR white {255, 255, 255};
+const COLOR BLACK {0, 0, 0};
+const COLOR RED {255, 0, 0};
+const COLOR GREEN {0, 255, 0};
+const COLOR BLUE {0, 0, 255};
+const COLOR YELLOW {255, 255, 0};
+const COLOR VIOLET {255, 0, 255};
+const COLOR CYAN {0, 255, 255};
+const COLOR WHITE {255, 255, 255};
 
 const bool NOT_EXPANDABLE = false;
 const bool EXPANDABLE = true;

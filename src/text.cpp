@@ -5,18 +5,10 @@
 
 // template class ClonableElement<Text>;
 
-Text::Text() : alignment{'l', 't'} {}//set_expandable(H_EXPANDABLE);}
-
-const ALIGNMENT Text::get_alignment() const {
-	return alignment;
-}
+Text::Text() : text(""), style(NORMAL) {}//set_expandable(H_EXPANDABLE);}
 
 const string& Text::get_text() const {
 	return text;
-}
-
-void Text::set_alignment(const ALIGNMENT& alignment) {
-	this->alignment = alignment;
 }
 
 void Text::set_text(const string& text) {
@@ -25,26 +17,9 @@ void Text::set_text(const string& text) {
 }
 
 void Text::show() const {
-	Element::show();
-	POSITION pos = {0, 0};
-	switch (alignment.w) {
-		case CENTER:
-			pos.x = size.w / 2 - text.size() / 2;
-			break;
-		case RIGHT:
-			pos.x = size.w - text.size();
-			break;
-	}
-	switch (alignment.h) {
-		case CENTER:
-			pos.y = size.h / 2;
-			break;
-		case BOTTOM:
-			pos.y = size.h - 1;
-			break;
-	}
+	// cout << style;
+	AlignableElement::show({(int)text.size(), 1});
 
-	cout << "\e[" << position.y + (pos.y >= 0 ? pos.y : 0) << ";" << position.x + (pos.x >= 0 ? pos.x : 0) << 'f';
 	printl(text, size.w);
-	cout << normal;
+	cout << NORMAL;
 }

@@ -1,19 +1,16 @@
 #pragma once
 
+#include "alignableelement.hpp"
 #include "clonableelement.hpp"
-#include "style.h"
 
-class Text : public ClonableElement<Text> {
+class Text : public ClonableElement<Text>, public AlignableElement {
 private:
-	ALIGNMENT alignment;
-	string text;
+	string text, style;
 public:
 	Text();
 
-	const ALIGNMENT get_alignment() const;
 	const string& get_text() const;
 
-	void set_alignment(const ALIGNMENT& alignment);
 	void set_text(const string& text);
 
 	void show() const override;

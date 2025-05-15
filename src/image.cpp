@@ -1,12 +1,13 @@
 #include "../inc/image.hpp"
 // #include "../inc/clonableelement.hpp"
 #include <opencv2/opencv.hpp>
+#include <vector>
 
 using namespace cv;
 
 // template class ClonableElement<Image>;
 
-Image::Image() {set_expandable(NOT_EXPANDABLE);}
+Image::Image() : path(""), image(vector<vector<CHAR>>()) {set_expandable(NOT_EXPANDABLE);}
 
 const string& Image::get_path() const {
 	return path;
@@ -69,5 +70,5 @@ void Image::show() const {
 			cout << "\e[38;2;" << (int)f_color.r << ";" << (int)f_color.g << ";" << (int)f_color.b << 'm' << "\e[48;2;" << (int)b_color.r << ";" << (int)b_color.g << ";" << (int)b_color.b << 'm' << "▀";
 		}
 	}
-	cout << normal;
+	cout << NORMAL;
 }

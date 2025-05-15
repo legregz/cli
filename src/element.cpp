@@ -2,7 +2,7 @@
 #include "../inc/functions.h"
 #include <iostream>
 
-Element::Element() : color(white), background_color(black), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0}, padding{0, 0, 0, 0} {}
+Element::Element() : color(WHITE), background_color(BLACK), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0}, padding{0, 0, 0, 0} {}
 
 COLOR Element::get_color() const {
 	return color;
@@ -47,8 +47,16 @@ void Element::set_color(const COLOR& color) {
 	this->color = color;
 }
 
+void Element::set_color_r(const COLOR& color) {
+	set_color(color);
+}
+
 void Element::set_background_color(const COLOR& color) {
 	this->background_color = color;
+}
+
+void Element::set_background_color_r(const COLOR& color) {
+	set_background_color(color);
 }
 
 void Element::set_expandable(bool expandable) {

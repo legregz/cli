@@ -1,7 +1,6 @@
 #pragma once
 
 #include "clonableelement.hpp"
-#include "element.hpp"
 #include <vector>
 
 class Frame : public ClonableElement<Frame> {
@@ -14,9 +13,11 @@ public:
 	Frame(const Frame& other);
 
 	bool get_direction() const;
-	Element& get_elt(int index) const;
+	const Element& get_elt(int index) const;
 
 	void set_direction(bool direction);
+	virtual void set_color_r(const COLOR& color) override;
+	virtual void set_background_color_r(const COLOR& background_color) override;
 	void update_size() override;
 
 	void add(Element& elt);
