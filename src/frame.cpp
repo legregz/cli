@@ -5,7 +5,7 @@
 
 // template class ClonableElement<Frame>;
 
-Frame::Frame() : direction(DIRECTION_H), elements(vector<unique_ptr<Element>>()) {Element::set_size({0, 0});}
+Frame::Frame() : direction(HORIZONTAL), elements(vector<unique_ptr<Element>>()) {set_size({0, 0});}
 
 Frame::Frame(const Frame& other) {
 	color = other.color;
@@ -28,8 +28,10 @@ bool Frame::get_direction() const {
 void Frame::add(Element& elt) {
 	elements.push_back(elt.clone());
 	if (!direction) {
+		//set_minimal_size({get_minimal_width() + elt.get_minimal_width(), get_minimal_height() < elt.get_minimal_height() ? elt.get_minimal_height() : get_minimal_height()});
 		Element::set_size({size.w + elt.get_width(), size.h < elt.get_height() ? elt.get_height() : size.h});
 	} else {
+		// set_minimal_size({get_minimal_height() < elt.get_minimal_width() ? elt.get_minimal_width() : get_minimal_width(), get_minimal_height() + elt.get_minimal_height()});
 		Element::set_size({size.w < elt.get_width() ? elt.get_width() : size.w, size.h + elt.get_height()});
 	}
 }
@@ -85,7 +87,8 @@ void Frame::update_size() {
 				elt->set_size({available_width, size.h});
 				expandable_elts--;
 			} else {
-				elt->set_height(size.h);
+				elt->set_size(elt->get_minimal_size());
+				elt->update_size();
 			}
 			added_sizes += elt->get_width();
 		}
@@ -93,7 +96,7 @@ void Frame::update_size() {
 	} else { // DIRECTION_V
 		for (auto& elt : elements) {
 			elt->set_position({position.x, position.y + added_sizes});
-			elt->set_width(this->size.w);
+			elt->set_width(size.w);
 			added_sizes += elt->get_height();
 		}
 	}

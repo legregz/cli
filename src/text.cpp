@@ -5,7 +5,7 @@
 
 // template class ClonableElement<Text>;
 
-Text::Text() : text(""), style(NORMAL) {}//set_expandable(H_EXPANDABLE);}
+Text::Text() : text(""), style(NORMAL) {set_expandable(NOT_EXPANDABLE);}//set_expandable(H_EXPANDABLE);}
 
 const string& Text::get_text() const {
 	return text;
@@ -13,12 +13,13 @@ const string& Text::get_text() const {
 
 void Text::set_text(const string& text) {
 	this->text = text;
-	size.w = text.size();
+	minimal_size.w = text.size();
 }
 
 void Text::show() const {
 	// cout << style;
-	AlignableElement::show({(int)text.size(), 1});
+	// AlignableElement::show({(int)text.size(), 1});
+	Element::show();
 
 	printl(text, size.w);
 	cout << NORMAL;

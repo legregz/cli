@@ -1,10 +1,9 @@
 #pragma once
 
-#include "alignableelement.hpp"
 #include "clonableelement.hpp"
 #include <vector>
 
-class Image : public ClonableElement<Image>, public AlignableElement {
+class Image : public ClonableElement<Image> {
 private:
 	string path;
 	vector<vector<CHAR>> image;

@@ -58,8 +58,8 @@ const COLOR WHITE {255, 255, 255};
 const bool NOT_EXPANDABLE = false;
 const bool EXPANDABLE = true;
 
-const bool DIRECTION_H = 0;
-const bool DIRECTION_V = 1;
+const bool HORIZONTAL = 0;
+const bool VERTICAL = 1;
 
 const char LEFT = 'l';
 const char CENTER = 'c';

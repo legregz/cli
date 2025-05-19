@@ -1,9 +1,8 @@
 #pragma once
 
-#include "alignableelement.hpp"
 #include "clonableelement.hpp"
 
-class Text : public ClonableElement<Text>, public AlignableElement {
+class Text : public ClonableElement<Text> {
 private:
 	string text, style;
 public:
