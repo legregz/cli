@@ -27,15 +27,16 @@ typedef struct ALIGNMENT {
 } ALIGNMENT;
 
 typedef struct COLOR {
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+	uint8_t r, g, b;
 } COLOR;
 
 typedef struct CHAR {
-	COLOR f_color;
-	COLOR b_color;
+	COLOR f_color, b_color;
 } CHAR;
+
+typedef struct EXPANDABLE {
+	bool w, h;
+} EXPANDABLE;
 
 const string NORMAL = "\e[0m";
 const string BOLD = "\e[1m";
@@ -54,9 +55,6 @@ const COLOR YELLOW {255, 255, 0};
 const COLOR VIOLET {255, 0, 255};
 const COLOR CYAN {0, 255, 255};
 const COLOR WHITE {255, 255, 255};
-
-const bool NOT_EXPANDABLE = false;
-const bool EXPANDABLE = true;
 
 const bool HORIZONTAL = 0;
 const bool VERTICAL = 1;

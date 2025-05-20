@@ -6,7 +6,7 @@ void Element::set_minimal_size(SIZE minimal_size) {
 	this->minimal_size = {minimal_size.w - border.l - border.r - padding.l - padding.r, minimal_size.h - border.t - border.b - padding.t - padding.b};
 }
 
-Element::Element() : color(WHITE), background_color(BLACK), expandable(EXPANDABLE), size{0, 1}, position{1, 1}, border{0, 0, 0, 0}, padding{0, 0, 0, 0}, alignment{'l', 't'}, minimal_size({0, 1}) {}
+Element::Element() : color(WHITE), background_color(BLACK), expandable{true, false}, size{0, 1}, position{1, 1}, border{0, 0, 0, 0}, padding{0, 0, 0, 0}, alignment{'l', 't'}, minimal_size({0, 1}) {}
 
 COLOR Element::get_color() const {
 	return color;
@@ -16,7 +16,7 @@ COLOR Element::get_background_color() const {
 	return background_color;
 }
 
-bool Element::get_expandable() const {
+EXPANDABLE Element::get_expandable() const {
 	return expandable;
 }
 
@@ -79,7 +79,7 @@ void Element::set_background_color_r(const COLOR& color) {
 	set_background_color(color);
 }
 
-void Element::set_expandable(bool expandable) {
+void Element::set_expandable(const EXPANDABLE& expandable) {
 	this->expandable = expandable;
 }
 

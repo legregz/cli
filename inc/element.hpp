@@ -7,7 +7,7 @@ class Element {
 protected:
 	COLOR color;
 	COLOR background_color;
-	bool expandable;
+	EXPANDABLE expandable;
 	SIZE size;
 	SIZE minimal_size;
 	POSITION position;
@@ -21,7 +21,7 @@ public:
 
 	virtual COLOR get_color() const;
 	virtual COLOR get_background_color() const;
-	virtual bool get_expandable() const;
+	virtual EXPANDABLE get_expandable() const;
 	virtual SIZE get_size() const;
 	virtual int get_width() const;
 	virtual int get_height() const;
@@ -37,7 +37,7 @@ public:
 	virtual void set_color_r(const COLOR& color);
 	virtual void set_background_color(const COLOR& background_color);
 	virtual void set_background_color_r(const COLOR& background_color);
-	virtual void set_expandable(bool expandable);
+	virtual void set_expandable(const EXPANDABLE& expandable);
 	virtual void set_size(const SIZE& size);
 	virtual void update_size();
 	virtual void set_width(int width);

@@ -2,7 +2,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-Window::Window() {}
+Window::Window() {set_expandable({true, true});}
 
 void Window::set_size() {
 	struct winsize ws;

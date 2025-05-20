@@ -5,7 +5,7 @@
 
 // template class ClonableElement<Frame>;
 
-Frame::Frame() : direction(HORIZONTAL), elements(vector<unique_ptr<Element>>()) {set_size({0, 0});}
+Frame::Frame() : direction(HORIZONTAL), elements(vector<unique_ptr<Element>>()) {set_size({0, 0}); set_expandable({true, true});}
 
 Frame::Frame(const Frame& other) {
 	color = other.color;
@@ -63,16 +63,18 @@ void Frame::update_size() {
 
 	int added_sizes = 0;
 
-	if (!direction) { // DIRECTION_H
-		int available_width = this->size.w, expandable_elts = elements.size(), pad;
+	if (!direction) { // HORIZONTAL
+		int available_width = size.w, expandable_elts = elements.size(), pad;
 
+		// determine the amount of horizontal expandable elements and adapt the available width of the frame
 		for (auto& elt : elements) {
-			if (!elt->get_expandable()) {
-				available_width -= elt->get_width();
+			if (!elt->get_expandable().w) {
+				available_width -= elt->get_minimal_width();
 				expandable_elts--;
 			}
 		}
 
+		// determine the width of the horizontal expandable elements
 		if (expandable_elts != 0) {
 			pad = available_width % expandable_elts;
 			available_width /= expandable_elts;
@@ -80,23 +82,62 @@ void Frame::update_size() {
 
 		for (auto& elt : elements) {
 			elt->set_position({position.x + added_sizes, position.y});
-			if (elt->get_expandable() && expandable) {
+
+			if (elt->get_expandable().w && expandable.w) {
 				if (expandable_elts == 1) {
 					available_width += pad;
 				}
-				elt->set_size({available_width, size.h});
+				elt->set_width(available_width);
 				expandable_elts--;
 			} else {
-				elt->set_size(elt->get_minimal_size());
-				elt->update_size();
+				elt->set_width(elt->get_minimal_width());
 			}
+
+			if (elt->get_expandable().h) {
+				elt->set_height(size.h);
+			} else {
+				elt->set_height(elt->get_minimal_height());
+			}
+			elt->update_size();
 			added_sizes += elt->get_width();
 		}
 
-	} else { // DIRECTION_V
+	} else { // VERTICAL
+		int available_height = size.h, expandable_elts = elements.size(), pad;
+
+		// determine the amount of vertical expandable elements and adapt the available height of the frame
+		for (auto& elt : elements) {
+			if (!elt->get_expandable().h) {
+				available_height -= elt->get_minimal_height();
+				expandable_elts--;
+			}
+		}
+
+		// determine the width of the horizontal expandable elements
+		if (expandable_elts != 0) {
+			pad = available_height % expandable_elts;
+			available_height /= expandable_elts;
+		}
+
 		for (auto& elt : elements) {
 			elt->set_position({position.x, position.y + added_sizes});
-			elt->set_width(size.w);
+
+			if (elt->get_expandable().h && expandable.h) {
+				if (expandable_elts == 1) {
+					available_height += pad;
+				}
+				elt->set_height(available_height);
+				expandable_elts--;
+			} else {
+				elt->set_height(elt->get_minimal_height());
+			}
+
+			if (elt->get_expandable().w) {
+				elt->set_width(size.w);
+			} else {
+				elt->set_width(elt->get_minimal_width());
+			}
+			elt->update_size();
 			added_sizes += elt->get_height();
 		}
 	}

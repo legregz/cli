@@ -5,7 +5,7 @@
 
 // template class ClonableElement<Text>;
 
-Text::Text() : text(""), style(NORMAL) {set_expandable(NOT_EXPANDABLE);}//set_expandable(H_EXPANDABLE);}
+Text::Text() : text(""), style(NORMAL) {set_expandable({false, false});}
 
 const string& Text::get_text() const {
 	return text;

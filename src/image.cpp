@@ -7,7 +7,7 @@ using namespace cv;
 
 // template class ClonableElement<Image>;
 
-Image::Image() : path(""), image(vector<vector<CHAR>>()) {set_expandable(NOT_EXPANDABLE);}
+Image::Image() : path(""), image(vector<vector<CHAR>>()) {set_expandable({false, false});}
 
 const string& Image::get_path() const {
 	return path;
