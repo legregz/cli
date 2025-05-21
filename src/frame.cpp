@@ -1,6 +1,5 @@
 #include "../inc/frame.hpp"
 // #include "../inc/clonableelement.hpp"
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 
@@ -23,11 +22,9 @@ bool Frame::get_direction() const {
 void Frame::add(Element& elt) {
 	elements.push_back(elt.clone());
 	if (!direction) {
-		set_minimal_size({get_minimal_width() + elt.get_minimal_width(), get_minimal_height() < elt.get_minimal_height() ? elt.get_minimal_height() : get_minimal_height()});
-		// Element::set_size({size.w + elt.get_width(), size.h < elt.get_height() ? elt.get_height() : size.h});
+		set_content_size({content_size.w + elt.get_minimal_width(), content_size.h < elt.get_minimal_height() ? elt.get_minimal_height() : content_size.h});
 	} else {
-		set_minimal_size({get_minimal_height() < elt.get_minimal_width() ? elt.get_minimal_width() : get_minimal_width(), get_minimal_height() + elt.get_minimal_height()});
-		// Element::set_size({size.w < elt.get_width() ? elt.get_width() : size.w, size.h + elt.get_height()});
+		set_content_size({content_size.w < elt.get_minimal_width() ? elt.get_minimal_width() : content_size.w, content_size.h + elt.get_minimal_height()});
 	}
 }
 
@@ -122,18 +119,18 @@ void Frame::set_direction(bool direction) {
 	this->direction = direction;
 }
 
-void Frame::set_color_r(const COLOR& color) {
-	set_color(color);
+void Frame::set_foreground_r(const COLOR& foreground) {
+	set_foreground(foreground);
 	for (auto& elt : elements) {
 		// if ((elt) == (Frame))
-		elt->set_color_r(color);
+		elt->set_foreground_r(foreground);
 	}
 }
 
-void Frame::set_background_color_r(const COLOR& background_color) {
-	set_background_color(background_color);
+void Frame::set_background_r(const COLOR& background) {
+	set_background(background);
 	for (auto& elt : elements) {
-		elt->set_background_color_r(background_color);
+		elt->set_background_r(background);
 	}
 }
 

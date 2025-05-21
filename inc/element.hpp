@@ -5,22 +5,21 @@
 
 class Element {
 protected:
-	COLOR color;
-	COLOR background_color;
+	COLOR foreground, background;
 	EXPANDABLE expandable;
-	SIZE size;
-	SIZE minimal_size;
+	SIZE size, content_size;
 	POSITION position;
 	BORDER border;
 	PADDING padding;
 	ALIGNMENT alignment;
 
 	virtual void set_minimal_size(SIZE minimal_size);
+	virtual void set_content_size(SIZE content_size);
 public:
 	Element();
 
-	virtual COLOR get_color() const;
-	virtual COLOR get_background_color() const;
+	virtual COLOR get_foreground() const;
+	virtual COLOR get_background() const;
 	virtual EXPANDABLE get_expandable() const;
 	virtual SIZE get_size() const;
 	virtual int get_width() const;
@@ -28,16 +27,19 @@ public:
 	virtual SIZE get_minimal_size() const;
 	virtual int get_minimal_width() const;
 	virtual int get_minimal_height() const;
+	virtual SIZE get_content_size() const;
+	virtual int get_content_width() const;
+	virtual int get_content_height() const;
 	virtual POSITION get_position() const;
 	virtual BORDER get_border() const;
 	virtual PADDING get_padding() const;
 	virtual ALIGNMENT get_alignment() const;
 	virtual POSITION get_content_position() const;
 
-	virtual void set_color(const COLOR& color);
-	virtual void set_color_r(const COLOR& color);
-	virtual void set_background_color(const COLOR& background_color);
-	virtual void set_background_color_r(const COLOR& background_color);
+	virtual void set_foreground(const COLOR& foreground);
+	virtual void set_foreground_r(const COLOR& foreground);
+	virtual void set_background(const COLOR& background);
+	virtual void set_background_r(const COLOR& background);
 	virtual void set_expandable(const EXPANDABLE& expandable);
 	virtual void set_size(const SIZE& size);
 	virtual void update_size();

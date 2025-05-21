@@ -17,8 +17,8 @@ public:
 	const Element& get_elt(int index) const;
 
 	void set_direction(bool direction);
-	virtual void set_color_r(const COLOR& color) override;
-	virtual void set_background_color_r(const COLOR& background_color) override;
+	virtual void set_foreground_r(const COLOR& foreground) override;
+	virtual void set_background_r(const COLOR& background) override;
 	void update_size() override;
 
 	void add(Element& elt);

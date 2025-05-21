@@ -31,7 +31,7 @@ typedef struct COLOR {
 } COLOR;
 
 typedef struct CHAR {
-	COLOR f_color, b_color;
+	COLOR foreground, background;
 } CHAR;
 
 typedef struct EXPANDABLE {

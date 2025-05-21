@@ -13,7 +13,7 @@ const string& Text::get_text() const {
 
 void Text::set_text(const string& text) {
 	this->text = text;
-	minimal_size.w = text.size();
+	set_content_size({(int)text.size(), 1});
 }
 
 void Text::show() const {

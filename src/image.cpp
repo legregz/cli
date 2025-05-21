@@ -18,7 +18,7 @@ void Image::set_path(const string& path) {
 }
 
 void Image::set_dimensions(const array<int, 2>& dimensions) {
-	Element::set_size({dimensions[0], dimensions[1] / 2});
+	Element::set_minimal_size({dimensions[0], dimensions[1] / 2});
 
 	cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
 	cv::Vec3b f_pixel, b_pixel;
@@ -59,14 +59,15 @@ void Image::set_dimensions(const array<int, 2>& dimensions) {
 }
 
 void Image::show() const {
-	COLOR f_color;
-	COLOR b_color;
+	Element::show();
+	COLOR f_color, b_color;
 
+	POSITION pos = get_content_position();
 	for (int y = 0; y < image.size(); y++) {
-		cout << "\e[" << position.y + y << ";" << position.x << 'f';
+		cout << "\e[" << pos.y + y << ";" << pos.x << 'f';
 		for (int x = 0; x < image[y].size(); x++) {
-			f_color = image[y][x].f_color;
-			b_color = image[y][x].b_color;
+			f_color = image[y][x].foreground;
+			b_color = image[y][x].background;
 			cout << "\e[38;2;" << (int)f_color.r << ";" << (int)f_color.g << ";" << (int)f_color.b << 'm' << "\e[48;2;" << (int)b_color.r << ";" << (int)b_color.g << ";" << (int)b_color.b << 'm' << "▀";
 		}
 	}

@@ -9,6 +9,7 @@ void Window::set_size() {
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
 	Element::set_position(position);
 	Frame::set_size({ws.ws_col, ws.ws_row});
+	Frame::update_size();
 }
 
 void Window::show() const {
