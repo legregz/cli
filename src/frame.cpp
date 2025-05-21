@@ -1,5 +1,6 @@
 #include "../inc/frame.hpp"
 // #include "../inc/clonableelement.hpp"
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 
@@ -7,14 +8,8 @@
 
 Frame::Frame() : direction(HORIZONTAL), elements(vector<unique_ptr<Element>>()) {set_size({0, 0}); set_expandable({true, true});}
 
-Frame::Frame(const Frame& other) {
-	color = other.color;
-	background_color = other.background_color;
-	expandable = other.expandable;
-	size = other.size;
-	border = other.border;
+Frame::Frame(const Frame& other) : ClonableElement(other) {
 	direction = other.direction;
-	padding = other.padding;
 
 	for (const auto& elt : other.elements) {
 		elements.push_back(elt->clone());
@@ -28,39 +23,15 @@ bool Frame::get_direction() const {
 void Frame::add(Element& elt) {
 	elements.push_back(elt.clone());
 	if (!direction) {
-		//set_minimal_size({get_minimal_width() + elt.get_minimal_width(), get_minimal_height() < elt.get_minimal_height() ? elt.get_minimal_height() : get_minimal_height()});
-		Element::set_size({size.w + elt.get_width(), size.h < elt.get_height() ? elt.get_height() : size.h});
+		set_minimal_size({get_minimal_width() + elt.get_minimal_width(), get_minimal_height() < elt.get_minimal_height() ? elt.get_minimal_height() : get_minimal_height()});
+		// Element::set_size({size.w + elt.get_width(), size.h < elt.get_height() ? elt.get_height() : size.h});
 	} else {
-		// set_minimal_size({get_minimal_height() < elt.get_minimal_width() ? elt.get_minimal_width() : get_minimal_width(), get_minimal_height() + elt.get_minimal_height()});
-		Element::set_size({size.w < elt.get_width() ? elt.get_width() : size.w, size.h + elt.get_height()});
+		set_minimal_size({get_minimal_height() < elt.get_minimal_width() ? elt.get_minimal_width() : get_minimal_width(), get_minimal_height() + elt.get_minimal_height()});
+		// Element::set_size({size.w < elt.get_width() ? elt.get_width() : size.w, size.h + elt.get_height()});
 	}
 }
 
 void Frame::update_size() {
-	// cout << "exp" << expandable << endl;
-
-	// if (expandable) {
-	// 	Element::set_size(size);
-	// } // else if (size.w < this->size.w) {
-	// 	Element::set_size({size.w, this->size.h});
-	// }
-	// 	int width = 0, elt_width;
-	// 	if (!direction) {
-	// 		for (auto& elt : elements) {
-	// 			width += elt->get_size()[0];
-	// 		}
-	// 	} else {
-	// 		for (auto& elt : elements) {
-	// 			elt_width = elt->get_size()[0];
-	// 			if (width < elt_width) {
-	// 				width = elt_width;
-	// 			}
-	// 		}
-	// 	}
-
-	// 	Element::set_size({width, size.h});
-	// }
-
 	int added_sizes = 0;
 
 	if (!direction) { // HORIZONTAL
@@ -78,6 +49,8 @@ void Frame::update_size() {
 		if (expandable_elts != 0) {
 			pad = available_width % expandable_elts;
 			available_width /= expandable_elts;
+		} else {
+			added_sizes = get_content_position().x - position.x;
 		}
 
 		for (auto& elt : elements) {
@@ -117,6 +90,8 @@ void Frame::update_size() {
 		if (expandable_elts != 0) {
 			pad = available_height % expandable_elts;
 			available_height /= expandable_elts;
+		} else {
+			added_sizes = get_content_position().y - position.y;
 		}
 
 		for (auto& elt : elements) {

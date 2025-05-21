@@ -21,6 +21,9 @@ void Text::show() const {
 	// AlignableElement::show({(int)text.size(), 1});
 	Element::show();
 
+	POSITION pos = get_content_position();
+	cout << "\e[" << pos.y << ";" << pos.x << 'f';
+
 	printl(text, size.w);
 	cout << NORMAL;
 }

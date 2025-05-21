@@ -22,17 +22,14 @@ EXPANDABLE Element::get_expandable() const {
 
 SIZE Element::get_size() const {
 	return {get_width(), get_height()};
-	// return {size.w + border.l + border.r, size.h + border.t + border.b};
 }
 
 int Element::get_width() const {
 	return size.w + border.l + border.r + padding.l + padding.r;
-	// return size.w + border.l + border.r;
 }
 
 int Element::get_height() const {
 	return size.h + border.t + border.b + padding.t + padding.b;
-	// return size.h + border.t + border.b;
 }
 
 SIZE Element::get_minimal_size() const {
@@ -61,6 +58,28 @@ PADDING Element::get_padding() const {
 
 ALIGNMENT Element::get_alignment() const {
 	return alignment;
+}
+
+POSITION Element::get_content_position() const {
+	POSITION pos = {0, 0};
+	switch (alignment.w) {
+		case CENTER:
+			pos.x = size.w / 2 - minimal_size.w / 2;
+			break;
+		case RIGHT:
+			pos.x = size.w - minimal_size.w;
+			break;
+	}
+	switch (alignment.h) {
+		case CENTER:
+			pos.y = size.h / 2 - minimal_size.h / 2;
+			break;
+		case BOTTOM:
+			pos.y = size.h - minimal_size.h;
+			break;
+	}
+
+	return {position.x + (pos.x >= 0 ? pos.x : 0), position.y + (pos.y >= 0 ? pos.y : 0)};
 }
 
 void Element::set_color(const COLOR& color) {
@@ -117,8 +136,6 @@ void Element::set_alignment(const ALIGNMENT& alignment) {
 	this->alignment = alignment;
 }
 
-// unique_ptr<Element> Element::clone() const {return nullptr;}
-
 void Element::show() const {
 	cout << "\e[38;2;" << (int)color.r << ";" << (int)color.g << ";" << (int)color.b << 'm'<< "\e[48;2;" << (int)background_color.r << ";" << (int)background_color.g << ";" << (int)background_color.b << 'm';
 	POSITION pos = get_position(); // with border
@@ -160,25 +177,4 @@ void Element::show() const {
 		cout << "\e[" << position.y + y << ";" << position.x << 'f';
 		prints(size.w);
 	}
-
-	pos = {0, 0};
-	switch (alignment.w) {
-		case CENTER:
-			pos.x = size.w / 2 - minimal_size.w / 2;
-			break;
-		case RIGHT:
-			pos.x = size.w - minimal_size.w;
-			break;
-	}
-	switch (alignment.h) {
-		case CENTER:
-			pos.y = size.h / 2 - minimal_size.h / 2;
-			break;
-		case BOTTOM:
-			pos.y = size.h - minimal_size.h;
-			break;
-	}
-
-	cout << "\e[" << position.y + (pos.y >= 0 ? pos.y : 0) << ";" << position.x + (pos.x >= 0 ? pos.x : 0) << 'f';
-	// cout << "\e[" << position.y << ";" << position.x << 'f';
 }

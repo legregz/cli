@@ -32,6 +32,7 @@ public:
 	virtual BORDER get_border() const;
 	virtual PADDING get_padding() const;
 	virtual ALIGNMENT get_alignment() const;
+	virtual POSITION get_content_position() const;
 
 	virtual void set_color(const COLOR& color);
 	virtual void set_color_r(const COLOR& color);
