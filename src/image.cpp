@@ -17,22 +17,22 @@ void Image::set_path(const string& path) {
 	this->path = path;
 }
 
-void Image::set_dimensions(const array<int, 2>& dimensions) {
-	Element::set_minimal_size({dimensions[0], dimensions[1] / 2});
+void Image::set_dimensions(const SIZE& dimensions) {
+	Element::set_minimal_size({dimensions.w, dimensions.h / 2});
 
 	cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
 	cv::Vec3b f_pixel, b_pixel;
 	array<int, 3> avg_f_pixel, avg_b_pixel;
-	int y_factor = img.rows / dimensions[1], x_factor = img.cols / dimensions[0], pixel_group_size = x_factor * y_factor;
+	int y_factor = img.rows / dimensions.h, x_factor = img.cols / dimensions.w, pixel_group_size = x_factor * y_factor;
 
 	// if (img.empty()) {
 	// 	std::cerr << "Erreur : Impossible de charger l'image!" << std::endl;
 	// }
 
-	image.resize(dimensions[1] / 2);
+	image.resize(dimensions.h / 2);
 
-	for (int y = 0; y < dimensions[1]; y += 2) {
-		for (int x = 0; x < dimensions[0]; x++) {
+	for (int y = 0; y < dimensions.h; y += 2) {
+		for (int x = 0; x < dimensions.w; x++) {
 			avg_f_pixel = {0, 0, 0};
 			avg_b_pixel = {0, 0, 0};
 

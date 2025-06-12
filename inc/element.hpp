@@ -1,7 +1,8 @@
 #pragma once
 
 #include "style.h"
-#include <memory>
+
+using namespace std;
 
 class Element {
 protected:
@@ -34,7 +35,7 @@ public:
 	virtual BORDER get_border() const;
 	virtual PADDING get_padding() const;
 	virtual ALIGNMENT get_alignment() const;
-	virtual POSITION get_content_position() const;
+	virtual POSITION get_content_position(SIZE content_size = {0, 0}) const;
 
 	virtual void set_foreground(const COLOR& foreground);
 	virtual void set_foreground_r(const COLOR& foreground);
@@ -49,8 +50,6 @@ public:
 	virtual void set_border(const BORDER& border);
 	virtual void set_padding(const PADDING& padding);
 	virtual void set_alignment(const ALIGNMENT& alignment);
-
-	virtual unique_ptr<Element> clone() const = 0;
 
 	virtual void show() const = 0;
 

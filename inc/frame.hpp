@@ -1,13 +1,13 @@
 #pragma once
 
-#include "clonableelement.hpp"
 #include "element.hpp"
+#include <memory>
 #include <vector>
 
-class Frame : public ClonableElement<Frame> {
+class Frame : public Element {
 protected:
 	bool direction;
-	vector<unique_ptr<Element>> elements;
+	vector<shared_ptr<Element>> elements;
 public:
 	Frame();
 

@@ -1,26 +1,26 @@
 #include "../inc/frame.hpp"
-// #include "../inc/clonableelement.hpp"
+
 #include <memory>
 #include <stdexcept>
 
 // template class ClonableElement<Frame>;
 
-Frame::Frame() : direction(HORIZONTAL), elements(vector<unique_ptr<Element>>()) {set_size({0, 0}); set_expandable({true, true});}
+Frame::Frame() : direction(HORIZONTAL), elements(vector<shared_ptr<Element>>()) {set_size({0, 0}); set_expandable({true, true});}
 
-Frame::Frame(const Frame& other) : ClonableElement(other) {
-	direction = other.direction;
+// Frame::Frame(const Frame& other) : ClonableElement(other) {
+// 	direction = other.direction;
 
-	for (const auto& elt : other.elements) {
-		elements.push_back(elt->clone());
-	}
-}
+// 	for (const auto& elt : other.elements) {
+// 		elements.push_back(elt->clone());
+// 	}
+// }
 
 bool Frame::get_direction() const {
 	return direction;
 }
 
 void Frame::add(Element& elt) {
-	elements.push_back(elt.clone());
+	elements.push_back((shared_ptr<Element>)&elt);
 	if (!direction) {
 		set_content_size({content_size.w + elt.get_minimal_width(), content_size.h < elt.get_minimal_height() ? elt.get_minimal_height() : content_size.h});
 	} else {
@@ -51,8 +51,6 @@ void Frame::update_size() {
 		}
 
 		for (auto& elt : elements) {
-			elt->set_position({position.x + added_sizes, position.y});
-
 			if (elt->get_expandable().w && expandable.w) {
 				if (expandable_elts == 1) {
 					available_width += pad;
@@ -68,6 +66,7 @@ void Frame::update_size() {
 			} else {
 				elt->set_height(elt->get_minimal_height());
 			}
+			elt->set_position({position.x + added_sizes, get_content_position(elt->get_size()).y});
 			elt->update_size();
 			added_sizes += elt->get_width();
 		}
@@ -92,8 +91,6 @@ void Frame::update_size() {
 		}
 
 		for (auto& elt : elements) {
-			elt->set_position({position.x, position.y + added_sizes});
-
 			if (elt->get_expandable().h && expandable.h) {
 				if (expandable_elts == 1) {
 					available_height += pad;
@@ -109,6 +106,7 @@ void Frame::update_size() {
 			} else {
 				elt->set_width(elt->get_minimal_width());
 			}
+			elt->set_position({get_content_position(elt->get_size()).x, position.y + added_sizes});
 			elt->update_size();
 			added_sizes += elt->get_height();
 		}

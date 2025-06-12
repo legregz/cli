@@ -1,8 +1,8 @@
 #pragma once
 
-#include "clonableelement.hpp"
+#include "element.hpp"
 
-class Text : public ClonableElement<Text> {
+class Text : public Element {
 private:
 	string text, style;
 public:

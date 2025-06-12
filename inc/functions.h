@@ -5,10 +5,12 @@
 
 using namespace std;
 
-void init();
-
 void prints(int nb);
 
 void printl(string text, int size);
 
 int set_str_from_file(FILE* file, string* string, char separator);
+
+void disable_raw_mode();
+
+void enable_raw_mode();

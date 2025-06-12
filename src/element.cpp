@@ -76,8 +76,13 @@ ALIGNMENT Element::get_alignment() const {
 	return alignment;
 }
 
-POSITION Element::get_content_position() const {
+POSITION Element::get_content_position(SIZE content_size) const {
+	if (content_size.w == 0 && content_size.h == 0) {
+		content_size = this->content_size;
+	};
+
 	POSITION pos = {0, 0};
+
 	switch (alignment.w) {
 		case CENTER:
 			pos.x = size.w / 2 - content_size.w / 2;
