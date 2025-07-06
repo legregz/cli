@@ -1,11 +1,11 @@
 // #pragma once
 
-// #include "element.hpp"
+// #include "component.hpp"
 // #include <memory>
 
-// template <typename Derived> class ClonableElement : public Element {
+// template <typename Derived> class ClonableComponent : public Component {
 // public:
-// 	unique_ptr<Element> clone() const final override {
+// 	unique_ptr<Component> clone() const final override {
 // 		return make_unique<Derived>(static_cast<const Derived&>(*this));
 // 	}
 // };

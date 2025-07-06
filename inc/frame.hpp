@@ -1,26 +1,26 @@
 #pragma once
 
-#include "element.hpp"
+#include "component.hpp"
 #include <memory>
 #include <vector>
 
-class Frame : public Element {
+class Frame : public Component {
 protected:
 	bool direction;
-	vector<shared_ptr<Element>> elements;
+	vector<shared_ptr<Component>> components;
 public:
 	Frame();
 
-	Frame(const Frame& other);
+	// Frame(const Frame& other);
 
 	bool get_direction() const;
-	const Element& get_elt(int index) const;
+	const Component& get_component(int index) const;
 
 	void set_direction(bool direction);
 	virtual void set_foreground_r(const COLOR& foreground) override;
 	virtual void set_background_r(const COLOR& background) override;
 	void update_size() override;
 
-	void add(Element& elt);
+	void add(shared_ptr<Component> component);
 	void show() const override;
 };

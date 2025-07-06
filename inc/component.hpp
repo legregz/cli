@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class Element {
+class Component {
 protected:
 	COLOR foreground, background;
 	EXPANDABLE expandable;
@@ -17,7 +17,7 @@ protected:
 	virtual void set_minimal_size(SIZE minimal_size);
 	virtual void set_content_size(SIZE content_size);
 public:
-	Element();
+	Component();
 
 	virtual COLOR get_foreground() const;
 	virtual COLOR get_background() const;
@@ -53,5 +53,5 @@ public:
 
 	virtual void show() const = 0;
 
-	virtual ~Element() = default;
+	virtual ~Component() = default;
 };

@@ -1,9 +1,9 @@
 #include "../inc/text.hpp"
-// #include "../inc/clonableelement.hpp"
+// #include "../inc/clonablecomponent.hpp"
 #include "../inc/functions.h"
 #include <iostream>
 
-// template class ClonableElement<Text>;
+// template class ClonableComponent<Text>;
 
 Text::Text() : text(""), style(NORMAL) {set_expandable({false, false});}
 
@@ -18,8 +18,8 @@ void Text::set_text(const string& text) {
 
 void Text::show() const {
 	// cout << style;
-	// AlignableElement::show({(int)text.size(), 1});
-	Element::show();
+	// AlignableComponent::show({(int)text.size(), 1});
+	Component::show();
 
 	POSITION pos = get_content_position();
 	cout << "\e[" << pos.y << ";" << pos.x << 'f';

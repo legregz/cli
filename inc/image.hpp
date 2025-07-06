@@ -1,9 +1,9 @@
 #pragma once
 
-#include "element.hpp"
+#include "component.hpp"
 #include <vector>
 
-class Image : public Element {
+class Image : public Component {
 private:
 	string path;
 	vector<vector<CHAR>> image;

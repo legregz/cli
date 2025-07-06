@@ -8,6 +8,6 @@
 // #include <map>
 // #include <string>
 // #include <memory>
-// #include "elements.hpp"
+// #include "components.hpp"
 
-// map<string, shared_ptr<Element>> open_elts_file(const string& file_name);
+// map<string, shared_ptr<Component>> open_components_file(const string& file_name);

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "element.hpp"
+#include "component.hpp"
 
-class Text : public Element {
+class Text : public Component {
 private:
 	string text, style;
 public:

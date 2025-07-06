@@ -1,11 +1,11 @@
 #include "../inc/image.hpp"
-// #include "../inc/clonableelement.hpp"
+// #include "../inc/clonablecomponent.hpp"
 #include <opencv2/opencv.hpp>
 #include <vector>
 
 using namespace cv;
 
-// template class ClonableElement<Image>;
+// template class ClonableComponent<Image>;
 
 Image::Image() : path(""), image(vector<vector<CHAR>>()) {set_expandable({false, false});}
 
@@ -18,7 +18,7 @@ void Image::set_path(const string& path) {
 }
 
 void Image::set_dimensions(const SIZE& dimensions) {
-	Element::set_minimal_size({dimensions.w, dimensions.h / 2});
+	Component::set_minimal_size({dimensions.w, dimensions.h / 2});
 
 	cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
 	cv::Vec3b f_pixel, b_pixel;
@@ -59,7 +59,7 @@ void Image::set_dimensions(const SIZE& dimensions) {
 }
 
 void Image::show() const {
-	Element::show();
+	Component::show();
 	COLOR f_color, b_color;
 
 	POSITION pos = get_content_position();
