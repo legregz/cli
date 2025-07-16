@@ -1,5 +1,4 @@
 #include "../inc/window.hpp"
-#include <algorithm>
 #include <iostream>
 #include <sys/ioctl.h>
 #include <unistd.h>

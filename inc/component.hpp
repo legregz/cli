@@ -1,6 +1,7 @@
 #pragma once
 
 #include "style.h"
+#include <memory>
 
 using namespace std;
 
@@ -10,7 +11,8 @@ protected:
 	EXPANDABLE expandable;
 	SIZE size, content_size;
 	POSITION position;
-	BORDER border;
+	shared_ptr<BORDER> border;
+	BORDER_SHOWN border_shown;
 	PADDING padding;
 	ALIGNMENT alignment;
 
@@ -32,7 +34,8 @@ public:
 	virtual int get_content_width() const;
 	virtual int get_content_height() const;
 	virtual POSITION get_position() const;
-	virtual BORDER get_border() const;
+	virtual shared_ptr<BORDER> get_border() const;
+	virtual BORDER_SHOWN get_border_shown() const;
 	virtual PADDING get_padding() const;
 	virtual ALIGNMENT get_alignment() const;
 	virtual POSITION get_content_position(SIZE content_size = {0, 0}) const;
@@ -47,7 +50,8 @@ public:
 	virtual void set_width(int width);
 	virtual void set_height(int height);
 	virtual void set_position(const POSITION& size);
-	virtual void set_border(const BORDER& border);
+	virtual void set_border(const shared_ptr<BORDER> border);
+	virtual void set_border_shown(const BORDER_SHOWN& border_shown);
 	virtual void set_padding(const PADDING& padding);
 	virtual void set_alignment(const ALIGNMENT& alignment);
 

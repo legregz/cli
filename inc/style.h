@@ -2,6 +2,7 @@
 
 #include <cfenv>
 #include <cstdint>
+#include <memory>
 #include <string>
 
 using namespace std;
@@ -15,12 +16,16 @@ typedef struct SIZE {
 } SIZE;
 
 typedef struct BORDER {
-	bool l, t, r, b;
+	char l[4], t[4], r[4], b[4], tl[4], tr[4], bl[4], br[4];
 } BORDER;
 
 typedef struct PADDING {
 	int l, t, r, b;
 } PADDING;
+
+typedef struct BORDER_SHOWN {
+	int l, t, r, b;
+} BORDER_SHOWN;
 
 typedef struct ALIGNMENT {
 	char w, h;
@@ -55,6 +60,8 @@ const COLOR YELLOW {255, 255, 0};
 const COLOR VIOLET {255, 0, 255};
 const COLOR CYAN {0, 255, 255};
 const COLOR WHITE {255, 255, 255};
+
+const shared_ptr DEFAULT_BORDER = make_shared<BORDER>((BORDER){"│", "─", "│", "─", "┌", "┐", "└", "┘"});
 
 const bool HORIZONTAL = 0;
 const bool VERTICAL = 1;

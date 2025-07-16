@@ -1,7 +1,10 @@
 #include "../inc/frame.hpp"
 
+#include <iostream>
 #include <memory>
 #include <stdexcept>
+
+using namespace std;
 
 // template class ClonableComponent<Frame>;
 
@@ -32,40 +35,73 @@ void Frame::update_size() {
 	int added_sizes = 0;
 
 	if (!direction) { // HORIZONTAL
-		int available_width = size.w, expandable_components = components.size(), pad;
+		int available_width = size.w, expandable_components = components.size(), pad, expandable_component_width, components_width[components.size()], minimal_width;
 
 		// determine the amount of horizontal expandable components and adapt the available width of the frame
-		for (auto& component : components) {
-			if (!component->get_expandable().w) {
-				available_width -= component->get_minimal_width();
+		for (int i = 0; i < components.size(); i++) {
+			if (!components.at(i)->get_expandable().w) {
+				available_width -= components.at(i)->get_minimal_width();
 				expandable_components--;
 			}
+
+			minimal_width = components.at(i)->get_minimal_width();
+			components_width[i] = minimal_width;
 		}
 
 		// determine the width of the horizontal expandable components
 		if (expandable_components != 0) {
-			pad = available_width % expandable_components;
-			available_width /= expandable_components;
+			expandable_component_width = available_width / expandable_components;
+
+			for (int i = 0; i < components.size(); i++) {
+				if (components.at(i)->get_expandable().w == true) {
+					minimal_width = components.at(i)->get_minimal_width();
+
+					if (minimal_width > expandable_component_width) {
+						expandable_components--;
+						available_width -= minimal_width;
+					}
+				}
+			}
+
+			expandable_component_width = available_width / expandable_components;
+
+			int width_sum = 0;
+
+			for (int i = 0; i < components.size(); i++) {
+				if (components.at(i)->get_expandable().w == true) {
+					minimal_width = components.at(i)->get_minimal_width();
+
+					if (minimal_width <= expandable_component_width) {
+						components_width[i] = expandable_component_width;
+					}
+				}
+
+				width_sum += components_width[i];
+			}
+
+			pad = get_width() - width_sum;
 		} else {
 			added_sizes = get_content_position().x - position.x;
 		}
 
-		for (auto& component : components) {
-			if (component->get_expandable().w && expandable.w) {
+		for (int i = 0; i < components.size(); i++) {
+			auto component = components.at(i);
+
+			if (component->get_expandable().w) {
 				if (expandable_components == 1) {
-					available_width += pad;
+					components_width[i] = components_width[i] + pad;
 				}
-				component->set_width(available_width);
 				expandable_components--;
-			} else {
-				component->set_width(component->get_minimal_width());
 			}
+
+			component->set_width(components_width[i]);
 
 			if (component->get_expandable().h) {
 				component->set_height(size.h);
 			} else {
 				component->set_height(component->get_minimal_height());
 			}
+
 			component->set_position({position.x + added_sizes, get_content_position(component->get_size()).y});
 			component->update_size();
 			added_sizes += component->get_width();

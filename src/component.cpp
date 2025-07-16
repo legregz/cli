@@ -3,14 +3,14 @@
 #include <iostream>
 
 void Component::set_minimal_size(SIZE minimal_size) {
-	this->content_size = {minimal_size.w - border.l - border.r - padding.l - padding.r, minimal_size.h - border.t - border.b - padding.t - padding.b};
+	this->content_size = {minimal_size.w - border_shown.l - border_shown.r - padding.l - padding.r, minimal_size.h - border_shown.t - border_shown.b - padding.t - padding.b};
 }
 
 void Component::set_content_size(SIZE content_size) {
 	this->content_size = content_size;
 }
 
-Component::Component() : foreground(WHITE), background(BLACK), expandable{true, false}, size{0, 1}, position{1, 1}, border{0, 0, 0, 0}, padding{0, 0, 0, 0}, alignment{'l', 't'}, content_size({0, 0}) {}
+Component::Component() : foreground(WHITE), background(BLACK), expandable{true, false}, size{0, 1}, position{1, 1}, border_shown{0, 0, 0, 0}, padding{0, 0, 0, 0}, alignment{'l', 't'}, content_size{0, 0}, border(DEFAULT_BORDER) {}
 
 COLOR Component::get_foreground() const {
 	return foreground;
@@ -29,11 +29,11 @@ SIZE Component::get_size() const {
 }
 
 int Component::get_width() const {
-	return size.w + border.l + border.r + padding.l + padding.r;
+	return size.w + border_shown.l + border_shown.r + padding.l + padding.r;
 }
 
 int Component::get_height() const {
-	return size.h + border.t + border.b + padding.t + padding.b;
+	return size.h + border_shown.t + border_shown.b + padding.t + padding.b;
 }
 
 SIZE Component::get_minimal_size() const {
@@ -41,11 +41,11 @@ SIZE Component::get_minimal_size() const {
 }
 
 int Component::get_minimal_width() const {
-	return content_size.w + border.l + border.r + padding.l + padding.r;
+	return content_size.w + border_shown.l + border_shown.r + padding.l + padding.r;
 }
 
 int Component::get_minimal_height() const {
-	return content_size.h + border.t + border.b + padding.t + padding.b;
+	return content_size.h + border_shown.t + border_shown.b + padding.t + padding.b;
 }
 
 SIZE Component::get_content_size() const {
@@ -61,11 +61,15 @@ int Component::get_content_height() const {
 }
 
 POSITION Component::get_position() const {
-	return {position.x - border.l - padding.l, position.y - border.t - padding.t};
+	return {position.x - border_shown.l - padding.l, position.y - border_shown.t - padding.t};
 }
 
-BORDER Component::get_border() const {
+shared_ptr<BORDER> Component::get_border() const {
 	return border;
+}
+
+BORDER_SHOWN Component::get_border_shown() const {
+	return border_shown;
 }
 
 PADDING Component::get_padding() const {
@@ -131,19 +135,23 @@ void Component::set_size(const SIZE& size) {
 void Component::update_size() {}
 
 void Component::set_width(int width) {
-	size.w = width - border.l - border.r - padding.l - padding.r;
+	size.w = width - border_shown.l - border_shown.r - padding.l - padding.r;
 }
 
 void Component::set_height(int height) {
-	size.h = height - border.t - border.b - padding.t - padding.b;
+	size.h = height - border_shown.t - border_shown.b - padding.t - padding.b;
 }
 
 void Component::set_position(const POSITION& position) {
-	this->position = {position.x + border.l + padding.l, position.y + border.t + padding.t};
+	this->position = {position.x + border_shown.l + padding.l, position.y + border_shown.t + padding.t};
 }
 
-void Component::set_border(const BORDER& border) {
+void Component::set_border(const shared_ptr<BORDER> border) {
 	this->border = border;
+}
+
+void Component::set_border_shown(const BORDER_SHOWN& border_shown) {
+	this->border_shown = border_shown;
 }
 
 void Component::set_padding(const PADDING& padding) {
@@ -156,40 +164,40 @@ void Component::set_alignment(const ALIGNMENT& alignment) {
 
 void Component::show() const {
 	cout << "\e[38;2;" << (int)foreground.r << ";" << (int)foreground.g << ";" << (int)foreground.b << 'm'<< "\e[48;2;" << (int)background.r << ";" << (int)background.g << ";" << (int)background.b << 'm';
-	POSITION pos = get_position(); // with border and padding
+	POSITION pos = get_position(); // with border_shown and padding
 	SIZE size_padding = {size.w + padding.r + padding.l, size.h + padding.t + padding.b};
 	POSITION opposite_position_padding = {position.x + size.w + padding.r, position.y + size.h + padding.b};
 
-	if (border.l) {
-		if (border.t) {
-			cout << "\e[" << pos.y << ";" << pos.x << "f┌";
+	if (border_shown.l) {
+		if (border_shown.t) {
+			cout << "\e[" << pos.y << ";" << pos.x << "f" << border->tl;
 		}
 		for (int y = 0 - padding.t; y < size.h + padding.b; y++) {
-			cout << "\e[" << position.y + y << ";" << pos.x << "f│";
+			cout << "\e[" << position.y + y << ";" << pos.x << "f" << border->l;
 		}
-		if (border.b) {
-			cout << "\e[" << opposite_position_padding.y << ";" << pos.x << "f└";
+		if (border_shown.b) {
+			cout << "\e[" << opposite_position_padding.y << ";" << pos.x << "f" << border->bl;
 		}
 	}
-	if (border.r) {
-		if (border.t) {
-			cout << "\e[" << pos.y << ";" << opposite_position_padding.x << "f┐";
+	if (border_shown.r) {
+		if (border_shown.t) {
+			cout << "\e[" << pos.y << ";" << opposite_position_padding.x << "f" << border->tr;
 		}
 		for (int y = 0 - padding.t; y < size.h + padding.b; y++) {
-			cout << "\e[" << position.y + y << ";" << opposite_position_padding.x << "f│";
+			cout << "\e[" << position.y + y << ";" << opposite_position_padding.x << "f" << border->r;
 		}
-		if (border.b) {
-			cout << "\e[" << opposite_position_padding.y << ";" << opposite_position_padding.x << "f┘";
-		}
-	}
-	if (border.t) {
-		for (int x = 0 - padding.l; x < size.w + padding.r; x++) {
-			cout << "\e[" << pos.y << ";" << position.x + x << "f─";
+		if (border_shown.b) {
+			cout << "\e[" << opposite_position_padding.y << ";" << opposite_position_padding.x << "f" << border->br;
 		}
 	}
-	if (border.b) {
+	if (border_shown.t) {
 		for (int x = 0 - padding.l; x < size.w + padding.r; x++) {
-			cout << "\e[" << opposite_position_padding.y << ";" << position.x + x << "f─";
+			cout << "\e[" << pos.y << ";" << position.x + x << "f" << border->t;
+		}
+	}
+	if (border_shown.b) {
+		for (int x = 0 - padding.l; x < size.w + padding.r; x++) {
+			cout << "\e[" << opposite_position_padding.y << ";" << position.x + x << "f" << border->b;
 		}
 	}
 

@@ -3,7 +3,7 @@ assets/*
 
 # Tests
 test.*
-test
+test*.*
 
 # Todos
 todo.*
